@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
     <!-- Header & Navigation -->
@@ -29,96 +30,174 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero Section with Photo -->
     <section id="home" class="hero">
+        <div class="hero-bg-overlay"></div>
         <div class="container">
             <div class="hero-content">
-                <h1>Brijesh Bhattarai</h1>
-                <h2>Finance & Economics Enthusiast</h2>
-                <p>Welcome to my personal website where I share insights, analysis, and perspectives on finance, economics, and market trends. Join me as I explore the complex world of money, markets, and economic policy.</p>
-                
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span>+977-9847374597</span>
+                <div class="hero-text animate__animated animate__fadeInLeft">
+                    <h6 class="hero-subtitle">Welcome to my professional space</h6>
+                    <h1>Brijesh <span class="text-accent">Bhattarai</span></h1>
+                    <h2 class="hero-title">Finance & Economics Enthusiast</h2>
+                    <p>Welcome to my personal website where I share insights, analysis, and perspectives on finance, economics, and market trends. Join me as I explore the complex world of money, markets, and economic policy.</p>
+                    
+                    <div class="hero-buttons">
+                        <a href="#contact" class="btn btn-primary">Contact Me</a>
+                        <a href="#blog" class="btn btn-outline">Read Blog</a>
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>brijesh.bhattarai@impacthub.net</span>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+977-9847374597</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>brijesh.bhattarai@impacthub.net</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-image animate__animated animate__fadeInRight">
+                    <div class="profile-photo-container">
+                        <img src="profile.jpg" alt="Brijesh Bhattarai" class="profile-photo" id="profile-photo">
+                        <div class="photo-frame"></div>
+                        <div class="photo-decoration"></div>
+                        <div class="photo-status">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Available for collaboration</span>
+                        </div>
+                    </div>
+                    <div class="photo-controls">
+                        <button class="photo-btn" id="change-photo-btn">
+                            <i class="fas fa-camera"></i> Change Photo
+                        </button>
+                        <button class="photo-btn" id="toggle-bw-btn">
+                            <i class="fas fa-adjust"></i> Toggle B&W
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scroll-indicator">
+                <a href="#about">
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section with Photo Grid -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>About Me</h2>
+                <p>Get to know more about my background, interests, and professional focus</p>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-photo-grid">
+                    <div class="photo-grid-item main-photo">
+                        <img src="profile.jpg" alt="Brijesh Bhattarai - Professional" id="about-photo">
+                        <div class="photo-caption">Brijesh Bhattarai</div>
+                    </div>
+                    <div class="photo-grid-item sub-photo finance">
+                        <div class="photo-overlay">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Finance</span>
+                        </div>
+                    </div>
+                    <div class="photo-grid-item sub-photo economics">
+                        <div class="photo-overlay">
+                            <i class="fas fa-globe-asia"></i>
+                            <span>Economics</span>
+                        </div>
+                    </div>
+                    <div class="photo-grid-item sub-photo analysis">
+                        <div class="photo-overlay">
+                            <i class="fas fa-search"></i>
+                            <span>Analysis</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-text">
+                    <h3>Finance & Economics Professional</h3>
+                    <p>I'm Brijesh Bhattarai, a passionate individual with a deep interest in finance and economics. My journey in this field began during my academic years and has evolved into a professional pursuit.</p>
+                    <p>I believe that understanding economic principles and financial markets is crucial for making informed decisions in both personal and professional life. My goal is to demystify complex financial concepts and share practical insights.</p>
+                    
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <div class="stat-number" data-count="50">0</div>
+                            <div class="stat-label">Articles Published</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" data-count="5">0</div>
+                            <div class="stat-label">Years Experience</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" data-count="100">0</div>
+                            <div class="stat-label">Projects Analyzed</div>
+                        </div>
+                    </div>
+                    
+                    <div class="interests">
+                        <div class="interest-item">
+                            <div class="interest-header">
+                                <h4><i class="fas fa-chart-bar"></i> Financial Markets</h4>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="interest-content">
+                                <p>Analysis of stock markets, bonds, derivatives, and alternative investments. Understanding market cycles, valuation techniques, and investment strategies for different economic environments.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="interest-item">
+                            <div class="interest-header">
+                                <h4><i class="fas fa-balance-scale"></i> Economic Policy</h4>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="interest-content">
+                                <p>Examination of fiscal and monetary policies, regulatory frameworks, and their impact on economic growth, inflation, employment, and income distribution.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="interest-item">
+                            <div class="interest-header">
+                                <h4><i class="fas fa-brain"></i> Behavioral Economics</h4>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="interest-content">
+                                <p>Exploring how psychological factors influence economic decisions, market anomalies, and consumer behavior. Understanding the cognitive biases that affect financial choices.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-  <!-- Replace the about-content div (lines 73-128) with: -->
-<div class="about-content">
-    <div class="about-image">
-        <img src=""C:\Users\Impact Hub KTM\Downloads\WhatsApp Image 2025-12-30 at 22.31.44.jpeg"" alt="Brijesh Bhattarai" class="profile-photo">
-    </div>
-    <div class="about-text">
-        <h3>Finance & Economics Professional</h3>
-        <p>I'm Brijesh Bhattarai, a passionate individual with a deep interest in finance and economics. My journey in this field began during my academic years and has evolved into a professional pursuit.</p>
-        <p>I believe that understanding economic principles and financial markets is crucial for making informed decisions in both personal and professional life. My goal is to demystify complex financial concepts and share practical insights.</p>
-        <p>Currently, I'm focused on analyzing market trends, economic policies, and their implications on various sectors. I'm particularly interested in the intersection of technology and finance, and how emerging trends are reshaping traditional economic models.</p>
-        
-        <div class="interests">
-            <div class="interest-item">
-                <div class="interest-header">
-                    <h4>Financial Markets</h4>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="interest-content">
-                    <p>Analysis of stock markets, bonds, derivatives, and alternative investments. Understanding market cycles, valuation techniques, and investment strategies for different economic environments.</p>
-                </div>
-            </div>
-            
-            <div class="interest-item">
-                <div class="interest-header">
-                    <h4>Economic Policy</h4>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="interest-content">
-                    <p>Examination of fiscal and monetary policies, regulatory frameworks, and their impact on economic growth, inflation, employment, and income distribution.</p>
-                </div>
-            </div>
-            
-            <div class="interest-item">
-                <div class="interest-header">
-                    <h4>Behavioral Economics</h4>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="interest-content">
-                    <p>Exploring how psychological factors influence economic decisions, market anomalies, and consumer behavior. Understanding the cognitive biases that affect financial choices.</p>
-                </div>
-            </div>
-            
-            <div class="interest-item">
-                <div class="interest-header">
-                    <h4>Emerging Markets</h4>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="interest-content">
-                    <p>Focus on developing economies, their unique challenges, growth opportunities, and integration into the global financial system. Special interest in South Asian economies.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
     <!-- Blog Section -->
     <section id="blog" class="blog">
         <div class="container">
             <div class="section-title">
-                <h2>Blog Posts</h2>
+                <h2>Latest Insights</h2>
                 <p>Insights, analysis, and perspectives on finance and economics</p>
             </div>
             
-            <div class="blog-container">
+            <div class="blog-filter">
+                <button class="filter-btn active" data-filter="all">All Posts</button>
+                <button class="filter-btn" data-filter="finance">Finance</button>
+                <button class="filter-btn" data-filter="economics">Economics</button>
+                <button class="filter-btn" data-filter="analysis">Market Analysis</button>
+            </div>
+            
+            <div class="blog-container" id="blog-container">
                 <!-- Blog posts will be dynamically loaded here -->
             </div>
             
             <div class="load-more-container">
-                <button id="load-more-btn" class="btn load-more-btn">Load More Articles</button>
+                <button id="load-more-btn" class="btn btn-outline">Load More Articles</button>
             </div>
         </div>
     </section>
@@ -127,12 +206,20 @@
     <section id="contact" class="contact">
         <div class="container">
             <div class="section-title">
-                <h2>Contact Me</h2>
-                <p>Get in touch for collaborations, discussions, or just to say hello</p>
+                <h2>Get In Touch</h2>
+                <p>Feel free to contact me for collaborations, discussions, or professional inquiries</p>
             </div>
             
             <div class="contact-container">
                 <div class="contact-details">
+                    <div class="contact-photo">
+                        <img src="profile.jpg" alt="Brijesh Bhattarai - Contact" id="contact-photo">
+                        <div class="contact-status">
+                            <div class="status-indicator active"></div>
+                            <span>Online - Quick Response</span>
+                        </div>
+                    </div>
+                    
                     <h3>Contact Information</h3>
                     
                     <div class="contact-info-item">
@@ -154,43 +241,53 @@
                     <div class="contact-info-item">
                         <i class="fas fa-map-marker-alt"></i>
                         <div>
-                            <h4>Based In</h4>
-                            <p>Nepal</p>
+                            <h4>Location</h4>
+                            <p>Kathmandu, Nepal</p>
                         </div>
                     </div>
                     
                     <div class="social-links">
                         <a href="https://www.linkedin.com/in/brijesh-bhattarai-2522731aa/" class="social-link" target="_blank" id="linkedin-link">
                             <i class="fab fa-linkedin-in"></i>
+                            <span>LinkedIn</span>
                         </a>
                         <a href="https://github.com/" class="social-link" target="_blank" id="github-link">
                             <i class="fab fa-github"></i>
+                            <span>GitHub</span>
                         </a>
                         <a href="#" class="social-link" id="twitter-link">
                             <i class="fab fa-twitter"></i>
+                            <span>Twitter</span>
                         </a>
                         <a href="#" class="social-link" id="medium-link">
                             <i class="fab fa-medium"></i>
+                            <span>Medium</span>
                         </a>
                     </div>
                 </div>
                 
                 <div class="contact-form">
-                    <h3>Send Me a Message</h3>
+                    <h3>Send Message</h3>
                     <form id="contact-form">
                         <div class="form-group">
                             <input type="text" id="name" placeholder="Your Name" required>
+                            <i class="fas fa-user"></i>
                         </div>
                         <div class="form-group">
                             <input type="email" id="email" placeholder="Your Email" required>
+                            <i class="fas fa-envelope"></i>
                         </div>
                         <div class="form-group">
                             <input type="text" id="subject" placeholder="Subject" required>
+                            <i class="fas fa-tag"></i>
                         </div>
                         <div class="form-group">
                             <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+                            <i class="fas fa-comment"></i>
                         </div>
-                        <button type="submit" class="btn submit-btn">Send Message</button>
+                        <button type="submit" class="btn btn-primary submit-btn">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
                         <div id="form-message"></div>
                     </form>
                 </div>
@@ -202,7 +299,8 @@
     <footer>
         <div class="container">
             <div class="footer-content">
-                <div class="footer-logo">Brijesh Bhattarai</div>
+                <div class="footer-logo">Brijesh<span>Bhattarai</span></div>
+                <p class="footer-tagline">Analyzing markets, understanding economics, sharing insights</p>
                 
                 <ul class="footer-links">
                     <li><a href="#home">Home</a></li>
@@ -211,12 +309,42 @@
                     <li><a href="#contact">Contact</a></li>
                 </ul>
                 
+                <div class="footer-social">
+                    <a href="https://www.linkedin.com/in/brijesh-bhattarai-2522731aa/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-medium"></i></a>
+                </div>
+                
                 <div class="copyright">
-                    <p>&copy; <span id="current-year">2023</span> Brijesh Bhattarai. All rights reserved. | Designed with focus on finance and economics</p>
+                    <p>&copy; <span id="current-year">2023</span> Brijesh Bhattarai. All rights reserved.</p>
                 </div>
             </div>
         </div>
     </footer>
+
+    <!-- Photo Upload Modal -->
+    <div class="modal-overlay" id="photo-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Profile Photo</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop your photo here or click to browse</p>
+                    <input type="file" id="photo-upload" accept="image/*">
+                    <button class="btn btn-outline" id="browse-btn">Browse Files</button>
+                </div>
+                <div class="photo-preview" id="photo-preview"></div>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" id="cancel-upload">Cancel</button>
+                    <button class="btn btn-primary" id="save-photo">Save Photo</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Back to Top Button -->
     <div class="back-to-top" id="back-to-top">
