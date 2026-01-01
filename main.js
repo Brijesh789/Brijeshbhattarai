@@ -21,6 +21,14 @@ const savePhoto = document.getElementById('save-photo');
 const uploadArea = document.getElementById('upload-area');
 const photoPreview = document.getElementById('photo-preview');
 const modalClose = document.querySelector('.modal-close');
+const submitBtn = document.querySelector('.submit-btn');
+const charCount = document.getElementById('char-count');
+const messageTextarea = document.getElementById('message');
+const formIndicator = document.getElementById('form-indicator');
+const indicatorDot = formIndicator?.querySelector('.indicator-dot');
+const indicatorText = formIndicator?.querySelector('.indicator-text');
+const draftBtn = document.getElementById('draft-btn');
+const resetBtn = document.getElementById('reset-btn');
 
 // Blog data with categories
 const blogPosts = [
@@ -31,7 +39,10 @@ const blogPosts = [
         date: "June 15, 2023",
         category: "economics",
         image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
-        readTime: "5 min read"
+        readTime: "5 min read",
+        views: "1,245",
+        author: "Brijesh Bhattarai",
+        tags: ["Economics", "Monetary Policy", "Emerging Markets"]
     },
     {
         id: 2,
@@ -40,7 +51,10 @@ const blogPosts = [
         date: "May 28, 2023",
         category: "finance",
         image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
-        readTime: "4 min read"
+        readTime: "4 min read",
+        views: "2,178",
+        author: "Brijesh Bhattarai",
+        tags: ["Psychology", "Investing", "Behavioral Finance"]
     },
     {
         id: 3,
@@ -49,7 +63,10 @@ const blogPosts = [
         date: "April 10, 2023",
         category: "finance",
         image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
-        readTime: "6 min read"
+        readTime: "6 min read",
+        views: "3,421",
+        author: "Brijesh Bhattarai",
+        tags: ["ESG", "Sustainable Investing", "Finance"]
     },
     {
         id: 4,
@@ -58,7 +75,10 @@ const blogPosts = [
         date: "March 22, 2023",
         category: "economics",
         image: "https://images.unsplash.com/photo-1620336655055-bd87c5d1d73f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
-        readTime: "7 min read"
+        readTime: "7 min read",
+        views: "4,892",
+        author: "Brijesh Bhattarai",
+        tags: ["Cryptocurrency", "CBDC", "Banking"]
     },
     {
         id: 5,
@@ -67,7 +87,10 @@ const blogPosts = [
         date: "February 18, 2023",
         category: "economics",
         image: "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
-        readTime: "8 min read"
+        readTime: "8 min read",
+        views: "5,634",
+        author: "Brijesh Bhattarai",
+        tags: ["Inflation", "Macroeconomics", "Pandemic"]
     },
     {
         id: 6,
@@ -76,7 +99,10 @@ const blogPosts = [
         date: "January 5, 2023",
         category: "analysis",
         image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
-        readTime: "5 min read"
+        readTime: "5 min read",
+        views: "3,987",
+        author: "Brijesh Bhattarai",
+        tags: ["Market Bubbles", "Behavioral Economics", "History"]
     },
     {
         id: 7,
@@ -85,7 +111,10 @@ const blogPosts = [
         date: "December 12, 2022",
         category: "finance",
         image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
-        readTime: "6 min read"
+        readTime: "6 min read",
+        views: "2,754",
+        author: "Brijesh Bhattarai",
+        tags: ["Fintech", "South Asia", "Digital Banking"]
     },
     {
         id: 8,
@@ -94,7 +123,10 @@ const blogPosts = [
         date: "November 20, 2022",
         category: "analysis",
         image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
-        readTime: "7 min read"
+        readTime: "7 min read",
+        views: "4,123",
+        author: "Brijesh Bhattarai",
+        tags: ["Supply Chain", "Global Economics", "Logistics"]
     }
 ];
 
@@ -103,6 +135,9 @@ let displayedPosts = 3;
 let currentFilter = 'all';
 let uploadedPhoto = null;
 let isBwMode = false;
+let lastScrollPosition = 0;
+let isScrollingDown = false;
+let unreadMessages = 3;
 
 // Initialize the website
 document.addEventListener('DOMContentLoaded', function() {
@@ -141,6 +176,24 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize modal
     initModal();
+    
+    // Initialize character counter
+    initCharCounter();
+    
+    // Initialize form validation
+    initFormValidation();
+    
+    // Initialize social links
+    initSocialLinks();
+    
+    // Initialize animations
+    initAnimations();
+    
+    // Initialize visitor counter (local storage based)
+    initVisitorCounter();
+    
+    // Initialize scroll effects
+    initScrollEffects();
 });
 
 // Mobile Menu Toggle
@@ -150,6 +203,9 @@ function initMobileMenu() {
         const icon = this.querySelector('i');
         icon.classList.toggle('fa-bars');
         icon.classList.toggle('fa-times');
+        
+        // Toggle body scroll
+        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
     });
     
     // Close mobile menu when clicking on a link
@@ -158,7 +214,18 @@ function initMobileMenu() {
             navLinks.classList.remove('active');
             mobileMenuBtn.querySelector('i').classList.remove('fa-times');
             mobileMenuBtn.querySelector('i').classList.add('fa-bars');
+            document.body.style.overflow = 'auto';
         });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.navbar') && navLinks.classList.contains('active')) {
+            navLinks.classList.remove('active');
+            mobileMenuBtn.querySelector('i').classList.remove('fa-times');
+            mobileMenuBtn.querySelector('i').classList.add('fa-bars');
+            document.body.style.overflow = 'auto';
+        }
     });
 }
 
@@ -173,8 +240,9 @@ function initInterestAccordion() {
             document.querySelectorAll('.interest-content').forEach(item => {
                 if (item !== content && item.classList.contains('active')) {
                     item.classList.remove('active');
-                    item.previousElementSibling.querySelector('i.fa-chevron-up').classList.remove('fa-chevron-up');
-                    item.previousElementSibling.querySelector('i').classList.add('fa-chevron-down');
+                    const otherIcon = item.previousElementSibling.querySelector('i');
+                    otherIcon.classList.remove('fa-chevron-up');
+                    otherIcon.classList.add('fa-chevron-down');
                 }
             });
             
@@ -223,16 +291,31 @@ function displayBlogPosts(filter = 'all') {
         blogCard.className = 'blog-card';
         blogCard.setAttribute('data-category', post.category);
         blogCard.innerHTML = `
-            <div class="blog-img" style="background-image: url('${post.image}');"></div>
+            <div class="blog-img" style="background-image: url('${post.image}');">
+                <div class="blog-overlay">
+                    <div class="blog-stats">
+                        <span><i class="far fa-eye"></i> ${post.views}</span>
+                        <span><i class="far fa-comment"></i> ${Math.floor(Math.random() * 50)}</span>
+                    </div>
+                </div>
+            </div>
             <div class="blog-content">
                 <div class="blog-meta">
                     <span><i class="far fa-calendar"></i> ${post.date}</span>
                     <span><i class="far fa-clock"></i> ${post.readTime}</span>
+                    <span><i class="fas fa-user"></i> ${post.author}</span>
                 </div>
                 <h3>${post.title}</h3>
                 <p>${post.excerpt}</p>
-                <div class="blog-category">${post.category.charAt(0).toUpperCase() + post.category.slice(1)}</div>
-                <a href="#" class="read-more" data-id="${post.id}">Read More <i class="fas fa-arrow-right"></i></a>
+                <div class="blog-tags">
+                    ${post.tags.map(tag => `<span class="blog-tag">${tag}</span>`).join('')}
+                </div>
+                <div class="blog-footer">
+                    <div class="blog-category">${post.category.charAt(0).toUpperCase() + post.category.slice(1)}</div>
+                    <a href="#" class="read-more" data-id="${post.id}">
+                        Read More <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         `;
         blogContainer.appendChild(blogCard);
@@ -253,12 +336,31 @@ function displayBlogPosts(filter = 'all') {
             showBlogPostModal(postId);
         });
     });
+    
+    // Add hover effects to blog cards
+    document.querySelectorAll('.blog-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.15)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+        });
+    });
 }
 
 // Load More Blog Posts
 loadMoreBtn.addEventListener('click', function() {
     displayedPosts += 3;
     displayBlogPosts(currentFilter);
+    
+    // Add animation to new cards
+    const newCards = blogContainer.querySelectorAll('.blog-card:nth-child(n+4)');
+    newCards.forEach(card => {
+        card.style.animation = 'fadeInUp 0.6s ease forwards';
+    });
 });
 
 // Blog Filter
@@ -268,6 +370,12 @@ function initBlogFilter() {
             // Update active button
             filterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
+            
+            // Add click animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
             
             // Update filter and reset displayed posts
             currentFilter = this.getAttribute('data-filter');
@@ -286,33 +394,80 @@ function showBlogPostModal(postId) {
         <div class="modal-overlay blog-modal-overlay">
             <div class="modal-content blog-modal-content">
                 <div class="modal-header">
-                    <h3>${post.title}</h3>
+                    <div class="modal-header-content">
+                        <h3>${post.title}</h3>
+                        <p class="modal-subtitle">By ${post.author} • ${post.date} • ${post.readTime}</p>
+                    </div>
                     <button class="modal-close">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="modal-meta">
-                        <span><i class="far fa-calendar"></i> ${post.date}</span>
-                        <span><i class="far fa-clock"></i> ${post.readTime}</span>
-                        <span><i class="far fa-folder"></i> ${post.category.charAt(0).toUpperCase() + post.category.slice(1)}</span>
+                    <div class="modal-image" style="background-image: url('${post.image}');">
+                        <div class="image-overlay">
+                            <div class="image-stats">
+                                <span><i class="far fa-eye"></i> ${post.views} views</span>
+                                <span><i class="far fa-comment"></i> ${Math.floor(Math.random() * 50)} comments</span>
+                                <span><i class="far fa-heart"></i> ${Math.floor(Math.random() * 200)} likes</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-image" style="background-image: url('${post.image}');"></div>
                     <div class="modal-article">
-                        <p>${post.excerpt}</p>
-                        <h4>Detailed Analysis</h4>
-                        <p>This is a sample blog post. In a real implementation, this would contain the full article content. For demonstration purposes, we're showing the excerpt here. A complete blog system would have a backend to manage posts, categories, and comments.</p>
-                        <p>Finance and economics are dynamic fields that require continuous learning and adaptation. As markets evolve and new economic theories emerge, staying informed is crucial for making sound financial decisions.</p>
-                        <p>The intersection of technology and finance has created new opportunities and challenges. From blockchain to AI-driven analysis, the tools available to economists and financial professionals are constantly evolving.</p>
                         <div class="article-tags">
-                            <span class="tag">${post.category}</span>
-                            <span class="tag">Analysis</span>
-                            <span class="tag">Market Trends</span>
+                            ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                        <div class="article-content">
+                            <p>${post.excerpt}</p>
+                            
+                            <h4>Detailed Analysis</h4>
+                            <p>This comprehensive analysis explores the intricate dynamics at play. The subject matter requires careful consideration of multiple factors, each contributing to the overall understanding of the topic.</p>
+                            
+                            <div class="article-highlight">
+                                <i class="fas fa-quote-left"></i>
+                                <p>The key insight is that traditional approaches may no longer be sufficient in today's rapidly changing environment.</p>
+                            </div>
+                            
+                            <p>The intersection of technology and finance has created new opportunities and challenges. From blockchain to AI-driven analysis, the tools available to economists and financial professionals are constantly evolving.</p>
+                            
+                            <h4>Key Takeaways</h4>
+                            <ul>
+                                <li>Understanding market dynamics is crucial for informed decision-making</li>
+                                <li>Historical context provides valuable lessons for current challenges</li>
+                                <li>Adaptability remains a key success factor in financial markets</li>
+                                <li>Continuous learning is essential in this rapidly evolving field</li>
+                            </ul>
+                            
+                            <p>As markets evolve and new economic theories emerge, staying informed is crucial for making sound financial decisions. The ability to adapt to changing circumstances while maintaining core principles is what separates successful investors from the rest.</p>
+                        </div>
+                        
+                        <div class="article-actions">
+                            <button class="action-btn like-btn">
+                                <i class="far fa-heart"></i> Like
+                            </button>
+                            <button class="action-btn share-btn">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                            <button class="action-btn bookmark-btn">
+                                <i class="far fa-bookmark"></i> Save
+                            </button>
+                        </div>
+                        
+                        <div class="author-box">
+                            <div class="author-avatar">
+                                <img src="brijesh5.jpeg" alt="Brijesh Bhattarai">
+                            </div>
+                            <div class="author-info">
+                                <h5>${post.author}</h5>
+                                <p>Finance & Economics Analyst</p>
+                                <p>Sharing insights on market trends, economic policies, and investment strategies.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline close-blog-modal">Close</button>
-                    <button class="btn btn-primary share-article">
-                        <i class="fas fa-share-alt"></i> Share Article
+                    <button class="btn btn-outline close-blog-modal">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button class="btn btn-primary subscribe-btn">
+                        <i class="fas fa-envelope"></i> Subscribe for Updates
                     </button>
                 </div>
             </div>
@@ -321,36 +476,6 @@ function showBlogPostModal(postId) {
     
     // Add modal to page
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Add event listeners to close modal
-    const modalOverlay = document.querySelector('.blog-modal-overlay');
-    const closeBtn = document.querySelector('.blog-modal-overlay .modal-close');
-    const closeModalBtn = document.querySelector('.close-blog-modal');
-    const shareBtn = document.querySelector('.share-article');
-    
-    function closeModal() {
-        modalOverlay.remove();
-    }
-    
-    closeBtn.addEventListener('click', closeModal);
-    closeModalBtn.addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', function(e) {
-        if (e.target === modalOverlay) {
-            closeModal();
-        }
-    });
-    
-    shareBtn.addEventListener('click', function() {
-        if (navigator.share) {
-            navigator.share({
-                title: post.title,
-                text: post.excerpt,
-                url: window.location.href + '#blog'
-            });
-        } else {
-            alert('Share functionality is not available in your browser. Copy the URL to share.');
-        }
-    });
     
     // Add CSS for modal if not already added
     if (!document.querySelector('#blog-modal-css')) {
@@ -363,98 +488,251 @@ function showBlogPostModal(postId) {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-color: rgba(0, 0, 0, 0.7);
+                background-color: rgba(0, 0, 0, 0.8);
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 z-index: 10000;
                 padding: 20px;
+                animation: fadeIn 0.3s ease;
             }
             
             .blog-modal-content {
                 background-color: white;
-                border-radius: 10px;
-                max-width: 800px;
+                border-radius: 15px;
+                max-width: 900px;
                 width: 100%;
                 max-height: 90vh;
                 overflow-y: auto;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                animation: slideUp 0.4s ease;
             }
             
             .blog-modal-content .modal-header {
-                padding: 20px 30px;
+                padding: 25px 30px;
                 border-bottom: 1px solid #eee;
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-items: flex-start;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 15px 15px 0 0;
             }
             
-            .blog-modal-content .modal-header h3 {
-                color: var(--primary-color);
+            .modal-header-content h3 {
+                margin: 0 0 10px 0;
+                font-size: 1.8rem;
+                color: white;
+            }
+            
+            .modal-subtitle {
                 margin: 0;
-                font-size: 1.5rem;
+                opacity: 0.9;
+                font-size: 0.95rem;
             }
             
             .blog-modal-content .modal-body {
                 padding: 30px;
             }
             
-            .modal-meta {
-                display: flex;
-                justify-content: space-between;
-                color: var(--secondary-color);
-                font-size: 0.9rem;
-                margin-bottom: 20px;
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-            
             .modal-image {
-                height: 300px;
+                height: 400px;
                 background-size: cover;
                 background-position: center;
-                border-radius: 8px;
+                border-radius: 10px;
                 margin-bottom: 25px;
+                position: relative;
             }
             
-            .modal-article h4 {
-                color: var(--primary-color);
-                margin: 25px 0 15px;
-                font-size: 1.3rem;
+            .image-overlay {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+                padding: 20px;
+                border-radius: 0 0 10px 10px;
             }
             
-            .modal-article p {
-                margin-bottom: 20px;
-                color: var(--light-text);
-                line-height: 1.8;
+            .image-stats {
+                display: flex;
+                gap: 20px;
+                color: white;
+                font-size: 0.9rem;
             }
             
             .article-tags {
                 display: flex;
                 gap: 10px;
-                margin-top: 25px;
+                margin-bottom: 25px;
                 flex-wrap: wrap;
             }
             
             .tag {
-                background: var(--gray-light);
-                padding: 5px 15px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 6px 15px;
                 border-radius: 50px;
+                font-size: 0.85rem;
+                font-weight: 500;
+            }
+            
+            .article-content h4 {
+                color: #333;
+                margin: 25px 0 15px;
+                font-size: 1.4rem;
+                border-left: 4px solid #667eea;
+                padding-left: 15px;
+            }
+            
+            .article-content p {
+                margin-bottom: 20px;
+                color: #555;
+                line-height: 1.8;
+                font-size: 1.05rem;
+            }
+            
+            .article-highlight {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                color: white;
+                padding: 25px;
+                border-radius: 10px;
+                margin: 30px 0;
+                position: relative;
+            }
+            
+            .article-highlight i.fa-quote-left {
+                font-size: 2rem;
+                opacity: 0.3;
+                position: absolute;
+                top: 15px;
+                left: 15px;
+            }
+            
+            .article-highlight p {
+                color: white;
+                font-size: 1.2rem;
+                font-style: italic;
+                margin: 0;
+                padding-left: 30px;
+            }
+            
+            .article-content ul {
+                margin: 20px 0;
+                padding-left: 20px;
+            }
+            
+            .article-content li {
+                margin-bottom: 10px;
+                color: #555;
+                line-height: 1.6;
+            }
+            
+            .article-actions {
+                display: flex;
+                gap: 15px;
+                margin: 30px 0;
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+            }
+            
+            .action-btn {
+                padding: 10px 20px;
+                border: 1px solid #ddd;
+                background: white;
+                border-radius: 8px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s;
+            }
+            
+            .action-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+            
+            .like-btn:hover {
+                border-color: #f5576c;
+                color: #f5576c;
+            }
+            
+            .share-btn:hover {
+                border-color: #667eea;
+                color: #667eea;
+            }
+            
+            .bookmark-btn:hover {
+                border-color: #4CAF50;
+                color: #4CAF50;
+            }
+            
+            .author-box {
+                display: flex;
+                gap: 20px;
+                padding: 25px;
+                background: #f8f9fa;
+                border-radius: 10px;
+                margin-top: 30px;
+            }
+            
+            .author-avatar {
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                overflow: hidden;
+            }
+            
+            .author-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .author-info h5 {
+                margin: 0 0 5px 0;
+                color: #333;
+            }
+            
+            .author-info p {
+                margin: 0 0 5px 0;
+                color: #666;
                 font-size: 0.9rem;
-                color: var(--light-text);
             }
             
             .blog-modal-content .modal-footer {
                 padding: 20px 30px;
                 border-top: 1px solid #eee;
                 display: flex;
-                justify-content: flex-end;
+                justify-content: space-between;
                 gap: 15px;
+            }
+            
+            .subscribe-btn {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
             
             @media (max-width: 768px) {
                 .blog-modal-content .modal-header {
-                    padding: 15px 20px;
+                    padding: 20px;
                 }
                 
                 .blog-modal-content .modal-body {
@@ -462,7 +740,12 @@ function showBlogPostModal(postId) {
                 }
                 
                 .modal-image {
-                    height: 200px;
+                    height: 250px;
+                }
+                
+                .author-box {
+                    flex-direction: column;
+                    text-align: center;
                 }
                 
                 .blog-modal-content .modal-footer {
@@ -477,6 +760,125 @@ function showBlogPostModal(postId) {
         `;
         document.head.appendChild(style);
     }
+    
+    // Add event listeners
+    setTimeout(() => {
+        const modalOverlay = document.querySelector('.blog-modal-overlay');
+        const closeBtn = modalOverlay?.querySelector('.modal-close');
+        const closeModalBtn = modalOverlay?.querySelector('.close-blog-modal');
+        const shareBtn = modalOverlay?.querySelector('.share-btn');
+        const likeBtn = modalOverlay?.querySelector('.like-btn');
+        const bookmarkBtn = modalOverlay?.querySelector('.bookmark-btn');
+        const subscribeBtn = modalOverlay?.querySelector('.subscribe-btn');
+        
+        if (!modalOverlay) return;
+        
+        function closeModal() {
+            modalOverlay.style.animation = 'fadeOut 0.3s ease forwards';
+            modalOverlay.querySelector('.blog-modal-content').style.animation = 'slideDown 0.3s ease forwards';
+            setTimeout(() => {
+                modalOverlay.remove();
+            }, 300);
+        }
+        
+        // Add closing animation
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Event listeners
+        closeBtn?.addEventListener('click', closeModal);
+        closeModalBtn?.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+        
+        // Share functionality
+        shareBtn?.addEventListener('click', function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: post.title,
+                    text: post.excerpt,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: Copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Link copied to clipboard!');
+                });
+            }
+        });
+        
+        // Like functionality
+        likeBtn?.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            icon.classList.toggle('far');
+            icon.classList.toggle('fas');
+            icon.classList.toggle('text-red');
+            this.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 200);
+        });
+        
+        // Bookmark functionality
+        bookmarkBtn?.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            icon.classList.toggle('far');
+            icon.classList.toggle('fas');
+            icon.classList.toggle('text-warning');
+            this.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 200);
+            
+            // Save to localStorage
+            const bookmarks = JSON.parse(localStorage.getItem('blogBookmarks') || '[]');
+            const index = bookmarks.indexOf(postId);
+            if (index === -1) {
+                bookmarks.push(postId);
+                alert('Article bookmarked!');
+            } else {
+                bookmarks.splice(index, 1);
+                alert('Bookmark removed!');
+            }
+            localStorage.setItem('blogBookmarks', JSON.stringify(bookmarks));
+        });
+        
+        // Subscribe functionality
+        subscribeBtn?.addEventListener('click', function() {
+            const email = prompt('Enter your email to subscribe for updates:');
+            if (email) {
+                alert('Thank you for subscribing! You\'ll receive updates on new articles.');
+                // In a real app, you would send this to your backend
+            }
+        });
+        
+        // Escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    }, 100);
 }
 
 // Smooth Scrolling
@@ -495,11 +897,12 @@ function initSmoothScrolling() {
                     navLinks.classList.remove('active');
                     mobileMenuBtn.querySelector('i').classList.remove('fa-times');
                     mobileMenuBtn.querySelector('i').classList.add('fa-bars');
+                    document.body.style.overflow = 'auto';
                 }
                 
                 // Scroll to target
                 const headerHeight = document.querySelector('header').offsetHeight;
-                const targetPosition = targetElement.offsetTop - headerHeight;
+                const targetPosition = targetElement.offsetTop - headerHeight - 20;
                 
                 window.scrollTo({
                     top: targetPosition,
@@ -510,55 +913,405 @@ function initSmoothScrolling() {
     });
 }
 
-// Contact Form
+// Contact Form with Python Backend Integration
 function initContactForm() {
-    contactForm.addEventListener('submit', function(e) {
+    contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // Get form values
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
         const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value;
+        const message = document.getElementById('message').value.trim();
         
-        // Simple validation
-        if (!name || !email || !subject || !message) {
-            showFormMessage('Please fill in all fields.', 'error');
+        // Validate form
+        if (!validateForm()) {
+            showFormMessage('Please fill in all required fields correctly.', 'error');
             return;
         }
         
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            showFormMessage('Please enter a valid email address.', 'error');
+        // Check consent
+        if (!document.getElementById('consent').checked) {
+            showFormMessage('Please agree to the privacy terms.', 'error');
             return;
         }
         
-        // In a real application, you would send the form data to a server here
-        // For this demo, we'll just show a success message
+        // Show loading state
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        submitBtn.disabled = true;
         
-        // Simulate API call
-        showFormMessage('Sending message...', 'success');
+        // Prepare data for Python backend
+        const formData = {
+            name: name,
+            email: email,
+            subject: subject,
+            message: message,
+            timestamp: new Date().toISOString(),
+            source: 'Website Contact Form'
+        };
         
-        setTimeout(() => {
-            // Show success message
-            showFormMessage('Thank you for your message! I\'ll get back to you soon.', 'success');
+        try {
+            // Send to Python Flask backend (running on localhost:5000)
+            const response = await fetch('http://localhost:5000/send_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
             
-            // Reset form
-            contactForm.reset();
+            const data = await response.json();
             
-            // Clear message after 5 seconds
+            if (data.success) {
+                showFormMessage(data.message, 'success');
+                
+                // Reset form
+                contactForm.reset();
+                updateFormIndicator();
+                charCount.textContent = '0';
+                
+                // Clear draft
+                localStorage.removeItem('contactFormDraft');
+                
+                // Track successful submission
+                trackFormSubmission('success');
+                
+                // Show confirmation animation
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                }, 2000);
+            } else {
+                showFormMessage(data.message, 'error');
+                trackFormSubmission('error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            
+            // Fallback: Use Formspree if Flask backend is down
+            if (confirm('Backend server might be down. Would you like to send the form via email directly?')) {
+                // Fallback to Formspree
+                const formspreeForm = document.createElement('form');
+                formspreeForm.method = 'POST';
+                formspreeForm.action = 'https://formspree.io/f/YOUR_FORM_ID'; // Replace with your Formspree ID
+                formspreeForm.style.display = 'none';
+                
+                const nameInput = document.createElement('input');
+                nameInput.type = 'hidden';
+                nameInput.name = 'name';
+                nameInput.value = name;
+                
+                const emailInput = document.createElement('input');
+                emailInput.type = 'hidden';
+                emailInput.name = 'email';
+                emailInput.value = email;
+                
+                const subjectInput = document.createElement('input');
+                subjectInput.type = 'hidden';
+                subjectInput.name = 'subject';
+                subjectInput.value = subject;
+                
+                const messageInput = document.createElement('input');
+                messageInput.type = 'hidden';
+                messageInput.name = 'message';
+                messageInput.value = message;
+                
+                formspreeForm.appendChild(nameInput);
+                formspreeForm.appendChild(emailInput);
+                formspreeForm.appendChild(subjectInput);
+                formspreeForm.appendChild(messageInput);
+                
+                document.body.appendChild(formspreeForm);
+                formspreeForm.submit();
+            } else {
+                showFormMessage('Connection failed. Please email me directly at brijesh.bhattarai@impacthub.net', 'error');
+                trackFormSubmission('error');
+            }
+        } finally {
+            // Reset button state after 2 seconds even if using fallback
             setTimeout(() => {
-                formMessage.textContent = '';
-                formMessage.className = '';
-            }, 5000);
-        }, 1500);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }, 2000);
+        }
+    });
+    
+    // Save draft button
+    draftBtn.addEventListener('click', function() {
+        saveDraft();
+    });
+    
+    // Reset button
+    resetBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to clear all form fields?')) {
+            contactForm.reset();
+            updateFormIndicator();
+            localStorage.removeItem('contactFormDraft');
+            charCount.textContent = '0';
+            showFormMessage('Form cleared.', 'info');
+        }
+    });
+    
+    // Auto-save draft on input
+    let draftTimer;
+    contactForm.addEventListener('input', function() {
+        clearTimeout(draftTimer);
+        draftTimer = setTimeout(saveDraft, 2000);
     });
 }
 
+// Form validation
+function validateForm() {
+    let isValid = true;
+    
+    // Validate name
+    const name = document.getElementById('name').value.trim();
+    if (name.length < 2) {
+        showValidationError('name', 'Please enter your full name (min. 2 characters)');
+        isValid = false;
+    } else {
+        clearValidationError('name');
+    }
+    
+    // Validate email
+    const email = document.getElementById('email').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showValidationError('email', 'Please enter a valid email address');
+        isValid = false;
+    } else {
+        clearValidationError('email');
+    }
+    
+    // Validate subject
+    const subject = document.getElementById('subject').value;
+    if (!subject) {
+        showValidationError('subject', 'Please select a subject');
+        isValid = false;
+    } else {
+        clearValidationError('subject');
+    }
+    
+    // Validate message
+    const message = document.getElementById('message').value.trim();
+    if (message.length < 10) {
+        showValidationError('message', 'Message must be at least 10 characters');
+        isValid = false;
+    } else if (message.length > 1000) {
+        showValidationError('message', 'Message must be less than 1000 characters');
+        isValid = false;
+    } else {
+        clearValidationError('message');
+    }
+    
+    return isValid;
+}
+
+function showValidationError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    const validationEl = document.getElementById(`${fieldId}-validation`);
+    
+    field.classList.add('invalid');
+    field.classList.remove('valid');
+    if (validationEl) {
+        validationEl.textContent = message;
+        validationEl.style.color = '#dc3545';
+    }
+}
+
+function clearValidationError(fieldId) {
+    const field = document.getElementById(fieldId);
+    const validationEl = document.getElementById(`${fieldId}-validation`);
+    
+    field.classList.remove('invalid');
+    field.classList.add('valid');
+    if (validationEl) {
+        validationEl.textContent = '';
+    }
+}
+
+function initFormValidation() {
+    const fields = ['name', 'email', 'subject', 'message'];
+    fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('blur', validateForm);
+            field.addEventListener('input', function() {
+                updateFormIndicator();
+            });
+        }
+    });
+}
+
+// Character counter
+function initCharCounter() {
+    if (messageTextarea && charCount) {
+        messageTextarea.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            
+            if (length > 1000) {
+                charCount.style.color = '#dc3545';
+                this.classList.add('invalid');
+            } else if (length > 800) {
+                charCount.style.color = '#ffc107';
+                this.classList.remove('invalid');
+            } else {
+                charCount.style.color = '#28a745';
+                this.classList.remove('invalid');
+            }
+            
+            updateFormIndicator();
+        });
+    }
+}
+
+// Update form indicator
+function updateFormIndicator() {
+    if (!formIndicator || !indicatorDot || !indicatorText) return;
+    
+    const name = document.getElementById('name')?.value || '';
+    const email = document.getElementById('email')?.value || '';
+    const subject = document.getElementById('subject')?.value || '';
+    const message = document.getElementById('message')?.value || '';
+    
+    const isNameValid = name.length >= 2;
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isSubjectValid = subject.length > 0;
+    const isMessageValid = message.length >= 10 && message.length <= 1000;
+    
+    const isValid = isNameValid && isEmailValid && isSubjectValid && isMessageValid;
+    
+    if (isValid) {
+        indicatorDot.style.background = '#28a745';
+        indicatorText.textContent = 'Form Ready';
+        indicatorDot.style.animation = 'pulse 2s infinite';
+    } else {
+        indicatorDot.style.background = '#ffc107';
+        indicatorText.textContent = 'Complete all fields';
+        indicatorDot.style.animation = 'none';
+    }
+}
+
+// Save draft functionality
+function saveDraft() {
+    const formData = {
+        name: document.getElementById('name')?.value || '',
+        email: document.getElementById('email')?.value || '',
+        subject: document.getElementById('subject')?.value || '',
+        message: document.getElementById('message')?.value || '',
+        timestamp: new Date().toISOString()
+    };
+    
+    localStorage.setItem('contactFormDraft', JSON.stringify(formData));
+    
+    // Show save notification
+    const notification = document.createElement('div');
+    notification.className = 'draft-notification';
+    notification.innerHTML = '<i class="fas fa-save"></i> Draft saved';
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 2000);
+    
+    // Add CSS for notification
+    const style = document.createElement('style');
+    style.textContent = `
+        .draft-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4a6cf7;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 1.7s;
+            z-index: 1000;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Load draft on page load
+function loadDraft() {
+    const draft = localStorage.getItem('contactFormDraft');
+    if (draft) {
+        try {
+            const formData = JSON.parse(draft);
+            const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            const draftDate = new Date(formData.timestamp);
+            
+            if (draftDate > oneWeekAgo) {
+                setTimeout(() => {
+                    if (confirm('You have a saved draft from ' + 
+                        draftDate.toLocaleDateString() + '. Would you like to load it?')) {
+                        document.getElementById('name').value = formData.name || '';
+                        document.getElementById('email').value = formData.email || '';
+                        document.getElementById('subject').value = formData.subject || '';
+                        document.getElementById('message').value = formData.message || '';
+                        updateFormIndicator();
+                        charCount.textContent = formData.message?.length || 0;
+                        showFormMessage('Draft loaded. You can continue editing.', 'info');
+                    }
+                }, 1000);
+            } else {
+                localStorage.removeItem('contactFormDraft');
+            }
+        } catch (e) {
+            console.error('Error loading draft:', e);
+        }
+    }
+}
+
+// Show form message
 function showFormMessage(text, type) {
-    formMessage.textContent = text;
-    formMessage.className = type;
+    formMessage.innerHTML = '';
+    
+    const messageEl = document.createElement('div');
+    messageEl.className = `message-${type}`;
+    messageEl.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${text}</span>
+    `;
+    
+    formMessage.appendChild(messageEl);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        messageEl.style.opacity = '0';
+        setTimeout(() => {
+            if (messageEl.parentNode === formMessage) {
+                formMessage.removeChild(messageEl);
+            }
+        }, 300);
+    }, 5000);
 }
 
 // Back to Top Button
@@ -568,6 +1321,13 @@ function initBackToTop() {
             backToTopBtn.classList.add('visible');
         } else {
             backToTopBtn.classList.remove('visible');
+        }
+        
+        // Parallax effect for hero section
+        const hero = document.querySelector('.hero');
+        if (hero) {
+            const scrolled = window.pageYOffset;
+            hero.style.transform = `translateY(${scrolled * 0.5}px)`;
         }
     });
     
@@ -606,6 +1366,8 @@ function initActiveNavLink() {
 
 // Photo Functionality
 function initPhotoFunctionality() {
+    if (!changePhotoBtn || !toggleBwBtn) return;
+    
     // Change photo button
     changePhotoBtn.addEventListener('click', function() {
         photoModal.classList.add('active');
@@ -618,33 +1380,55 @@ function initPhotoFunctionality() {
         profilePhotos.forEach(photo => {
             if (isBwMode) {
                 photo.classList.add('bw');
+                photo.style.filter = 'grayscale(100%) contrast(120%)';
             } else {
                 photo.classList.remove('bw');
+                photo.style.filter = 'none';
             }
         });
         
-        // Update button text
+        // Update button text with animation
         const icon = this.querySelector('i');
-        const text = isBwMode ? 'Toggle Color' : 'Toggle B&W';
+        const text = isBwMode ? 'Color Mode' : 'B&W Mode';
         icon.className = isBwMode ? 'fas fa-palette' : 'fas fa-adjust';
         this.innerHTML = `<i class="${icon.className}"></i> ${text}`;
+        
+        // Add click animation
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            this.style.transform = 'scale(1)';
+        }, 150);
+        
+        // Save preference to localStorage
+        localStorage.setItem('photoBwMode', isBwMode);
     });
+    
+    // Load B&W mode preference
+    const savedBwMode = localStorage.getItem('photoBwMode');
+    if (savedBwMode === 'true') {
+        isBwMode = true;
+        profilePhotos.forEach(photo => {
+            photo.classList.add('bw');
+            photo.style.filter = 'grayscale(100%) contrast(120%)';
+        });
+        const icon = toggleBwBtn.querySelector('i');
+        icon.className = 'fas fa-palette';
+        toggleBwBtn.innerHTML = `<i class="${icon.className}"></i> Color Mode`;
+    }
 }
 
 // Modal Functionality
 function initModal() {
+    if (!photoModal) return;
+    
     // Close modal button
     modalClose.addEventListener('click', function() {
-        photoModal.classList.remove('active');
-        document.body.style.overflow = 'auto';
+        closePhotoModal();
     });
     
     // Cancel upload button
     cancelUpload.addEventListener('click', function() {
-        photoModal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-        uploadedPhoto = null;
-        photoPreview.innerHTML = '';
+        closePhotoModal();
     });
     
     // Browse button
@@ -661,10 +1445,32 @@ function initModal() {
     photoUpload.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
+            // Validate file type and size
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (!validTypes.includes(file.type)) {
+                alert('Please select a valid image file (JPEG, PNG, GIF, or WebP).');
+                return;
+            }
+            
+            if (file.size > maxSize) {
+                alert('File size must be less than 5MB.');
+                return;
+            }
+            
             const reader = new FileReader();
             reader.onload = function(event) {
                 uploadedPhoto = event.target.result;
-                photoPreview.innerHTML = `<img src="${uploadedPhoto}" alt="Preview">`;
+                photoPreview.innerHTML = `
+                    <div class="preview-container">
+                        <img src="${uploadedPhoto}" alt="Preview">
+                        <div class="preview-info">
+                            <p>${file.name}</p>
+                            <p>${(file.size / 1024).toFixed(1)} KB</p>
+                        </div>
+                    </div>
+                `;
             };
             reader.readAsDataURL(file);
         }
@@ -675,17 +1481,32 @@ function initModal() {
         if (uploadedPhoto) {
             // Update all profile photos on the page
             profilePhotos.forEach(photo => {
-                photo.src = uploadedPhoto;
+                const img = new Image();
+                img.onload = function() {
+                    photo.src = uploadedPhoto;
+                    // Apply B&W filter if active
+                    if (isBwMode) {
+                        photo.style.filter = 'grayscale(100%) contrast(120%)';
+                    }
+                };
+                img.src = uploadedPhoto;
             });
             
-            // Show success message
-            alert('Profile photo updated successfully!');
+            // Show success message with animation
+            this.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            this.style.background = '#28a745';
             
-            // Close modal
-            photoModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            uploadedPhoto = null;
-            photoPreview.innerHTML = '';
+            setTimeout(() => {
+                closePhotoModal();
+                // Reset button
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-save"></i> Save Photo';
+                    this.style.background = '';
+                }, 500);
+            }, 1000);
+            
+            // Save to localStorage
+            localStorage.setItem('profilePhoto', uploadedPhoto);
         } else {
             alert('Please select a photo first.');
         }
@@ -694,12 +1515,32 @@ function initModal() {
     // Close modal when clicking outside
     photoModal.addEventListener('click', function(e) {
         if (e.target === photoModal) {
-            photoModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            uploadedPhoto = null;
-            photoPreview.innerHTML = '';
+            closePhotoModal();
         }
     });
+    
+    // Escape key to close modal
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && photoModal.classList.contains('active')) {
+            closePhotoModal();
+        }
+    });
+    
+    // Load saved profile photo
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        profilePhotos.forEach(photo => {
+            photo.src = savedPhoto;
+        });
+    }
+}
+
+function closePhotoModal() {
+    photoModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    uploadedPhoto = null;
+    photoPreview.innerHTML = '';
+    photoUpload.value = '';
 }
 
 // Statistics Counter
@@ -711,14 +1552,14 @@ function initStatsCounter() {
             if (entry.isIntersecting) {
                 const statNumber = entry.target;
                 const target = parseInt(statNumber.getAttribute('data-count'));
-                const duration = 2000; // 2 seconds
-                const increment = target / (duration / 16); // 60fps
+                const duration = 2000;
+                const increment = target / (duration / 16);
                 let current = 0;
                 
                 const timer = setInterval(() => {
                     current += increment;
                     if (current >= target) {
-                        statNumber.textContent = target;
+                        statNumber.textContent = target + '+';
                         clearInterval(timer);
                     } else {
                         statNumber.textContent = Math.floor(current);
@@ -735,37 +1576,136 @@ function initStatsCounter() {
     });
 }
 
-// Header scroll effect
-window.addEventListener('scroll', function() {
-    const header = document.querySelector('header');
-    if (window.pageYOffset > 50) {
-        header.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
-        header.style.padding = '0';
-        header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
-    } else {
-        header.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.08)';
-        header.style.padding = '';
-        header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+// Social Links
+function initSocialLinks() {
+    const socialLinks = document.querySelectorAll('.social-link');
+    
+    socialLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const platform = this.querySelector('span').textContent;
+            trackSocialClick(platform);
+        });
+    });
+    
+    // LinkedIn specific tracking
+    const linkedinLink = document.getElementById('linkedin-link');
+    if (linkedinLink) {
+        linkedinLink.addEventListener('click', function() {
+            // Open in new tab with tracking parameters
+            this.href = this.href + '?utm_source=website&utm_medium=social&utm_campaign=contact';
+        });
     }
-});
+}
 
-// Add category styling to blog cards
-const style = document.createElement('style');
-style.textContent = `
-    .blog-category {
-        display: inline-block;
-        background: var(--gray-light);
-        color: var(--light-text);
-        padding: 5px 15px;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        margin-bottom: 15px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-`;
-document.head.appendChild(style);
+// Animations
+function initAnimations() {
+    // Add intersection observer for fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    // Observe elements that should animate
+    document.querySelectorAll('.blog-card, .contact-info-item, .stat-item').forEach(el => {
+        observer.observe(el);
+    });
+    
+    // Add CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Visitor Counter
+function initVisitorCounter() {
+    let visitors = localStorage.getItem('siteVisitors') || 0;
+    visitors = parseInt(visitors) + 1;
+    localStorage.setItem('siteVisitors', visitors);
+    
+    // Display visitor count in console (optional)
+    console.log(`Welcome! You are visitor #${visitors}`);
+}
+
+// Scroll Effects
+function initScrollEffects() {
+    let ticking = false;
+    
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                // Update header transparency
+                const header = document.querySelector('header');
+                const scrollTop = window.pageYOffset;
+                
+                if (scrollTop > 100) {
+                    header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+                    header.style.backdropFilter = 'blur(10px)';
+                    header.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.1)';
+                } else {
+                    header.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                    header.style.backdropFilter = 'blur(5px)';
+                    header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+                }
+                
+                // Parallax for hero
+                const hero = document.querySelector('.hero');
+                if (hero) {
+                    hero.style.transform = `translateY(${scrollTop * 0.4}px)`;
+                }
+                
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+}
+
+// Analytics functions
+function trackFormSubmission(status) {
+    const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+    submissions.push({
+        timestamp: new Date().toISOString(),
+        status: status
+    });
+    localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+}
+
+function trackSocialClick(platform) {
+    const clicks = JSON.parse(localStorage.getItem('socialClicks') || '[]');
+    clicks.push({
+        platform: platform,
+        timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('socialClicks', JSON.stringify(clicks));
+}
 
 // Photo fallback functionality
 window.addEventListener('load', function() {
@@ -773,7 +1713,122 @@ window.addEventListener('load', function() {
         photo.addEventListener('error', function() {
             // If photo doesn't exist, show placeholder
             this.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80';
-            console.log('Profile photo not found, using placeholder');
+            this.alt = 'Profile Photo Placeholder';
         });
     });
+    
+    // Load draft on page load
+    setTimeout(loadDraft, 500);
+    
+    // Initialize form indicator
+    updateFormIndicator();
+});
+
+// Add additional blog card styles
+const blogStyles = document.createElement('style');
+blogStyles.textContent = `
+    .blog-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.7));
+        border-radius: 10px 10px 0 0;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .blog-img:hover .blog-overlay {
+        opacity: 1;
+    }
+    
+    .blog-stats {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        display: flex;
+        gap: 15px;
+        color: white;
+        font-size: 0.85rem;
+    }
+    
+    .blog-tags {
+        display: flex;
+        gap: 8px;
+        margin: 15px 0;
+        flex-wrap: wrap;
+    }
+    
+    .blog-tag {
+        background: #f0f2f5;
+        color: #666;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+    }
+    
+    .blog-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    
+    .read-more {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #4a6cf7;
+        text-decoration: none;
+        font-weight: 500;
+        transition: gap 0.3s;
+    }
+    
+    .read-more:hover {
+        gap: 10px;
+    }
+    
+    .text-red {
+        color: #f5576c !important;
+    }
+    
+    .text-warning {
+        color: #ffc107 !important;
+    }
+`;
+document.head.appendChild(blogStyles);
+
+// Handle page visibility change
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        // Page is visible again - update visitor count
+        initVisitorCounter();
+    }
+});
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + K to focus search (for future search feature)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        // Focus search if exists, otherwise focus contact form
+        const searchInput = document.querySelector('input[type="search"]');
+        if (searchInput) {
+            searchInput.focus();
+        } else {
+            document.getElementById('name')?.focus();
+        }
+    }
+    
+    // Escape to close modals
+    if (e.key === 'Escape') {
+        const openModal = document.querySelector('.modal-overlay.active');
+        if (openModal) {
+            openModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    }
 });
