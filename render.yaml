@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: brijesh-contact-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL
+        value: brijesh.bhattarai@impacthub.net
