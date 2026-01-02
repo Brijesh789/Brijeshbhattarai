@@ -7,11 +7,26 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)  # Allow requests from your website
+CORS(app)
 
 @app.route('/')
 def home():
-    return "📧 Contact Form API is running!"
+    # Show environment variable status
+    email_set = "✅" if os.environ.get('EMAIL_USER') else "❌"
+    pass_set = "✅" if os.environ.get('EMAIL_PASSWORD') else "❌"
+    admin_set = "✅" if os.environ.get('ADMIN_EMAIL') else "❌"
+    
+    return f"""
+    <h1>📧 Contact Form API</h1>
+    <p>Status: <strong>Running</strong></p>
+    <hr>
+    <h3>Environment Variables:</h3>
+    <p>EMAIL_USER: {email_set} {'Set' if os.environ.get('EMAIL_USER') else 'Not Set'}</p>
+    <p>EMAIL_PASSWORD: {pass_set} {'Set' if os.environ.get('EMAIL_PASSWORD') else 'Not Set'}</p>
+    <p>ADMIN_EMAIL: {admin_set} {'Set' if os.environ.get('ADMIN_EMAIL') else 'Not Set'}</p>
+    <hr>
+    <p>Test with: POST /contact with JSON data</p>
+    """
 
 @app.route('/contact', methods=['POST'])
 def contact():
@@ -19,28 +34,46 @@ def contact():
         # Get form data
         data = request.json
         
+        if not data:
+            return jsonify({
+                "status": "error",
+                "message": "No data received"
+            }), 400
+        
         # Extract fields
         name = data.get('name', 'Not provided')
         email = data.get('email', 'Not provided')
         phone = data.get('phone', 'Not provided')
         message = data.get('message', 'No message')
         
+        print(f"📥 Received contact form:")
+        print(f"   Name: {name}")
+        print(f"   Email: {email}")
+        print(f"   Phone: {phone}")
+        print(f"   Message: {message}")
+        
         # Send email to yourself
-        send_contact_email(name, email, phone, message)
+        result = send_contact_email(name, email, phone, message)
         
-        # Log to Render console (optional)
-        print(f"✅ Message sent to email: {name} <{email}>")
-        
-        return jsonify({
-            "status": "success",
-            "message": "Your message has been sent successfully!"
-        }), 200
+        if result == "success":
+            print(f"✅ Email sent successfully!")
+            return jsonify({
+                "status": "success",
+                "message": "Your message has been sent successfully!"
+            }), 200
+        else:
+            print(f"❌ Email failed: {result}")
+            return jsonify({
+                "status": "error",
+                "message": f"Failed to send email: {result}"
+            }), 500
         
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        error_msg = str(e)
+        print(f"❌ Error in contact endpoint: {error_msg}")
         return jsonify({
             "status": "error",
-            "message": "Failed to send message. Please try again."
+            "message": f"Server error: {error_msg}"
         }), 500
 
 def send_contact_email(name, sender_email, phone, message):
@@ -49,73 +82,21 @@ def send_contact_email(name, sender_email, phone, message):
     # Your email credentials (set in Render environment variables)
     your_email = os.environ.get('EMAIL_USER')
     your_password = os.environ.get('EMAIL_PASSWORD')
-    admin_email = os.environ.get('ADMIN_EMAIL', 'brijesh.bhattarai@impacthub.net')
+    admin_email = os.environ.get('ADMIN_EMAIL', 'brijeshbh78901@gmail.com')
+    
+    print(f"📧 Email setup:")
+    print(f"   EMAIL_USER: {your_email}")
+    print(f"   EMAIL_PASSWORD: {'Set' if your_password else 'Not set'}")
+    print(f"   ADMIN_EMAIL: {admin_email}")
+    
+    # Check if environment variables are set
+    if not your_email or not your_password:
+        return "Email credentials not configured in environment variables"
     
     # Email content
     subject = f"New Contact Form Submission from {name}"
     
-    # Create HTML email body
-    html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-            .header {{ background: #4CAF50; color: white; padding: 20px; text-align: center; }}
-            .content {{ background: #f9f9f9; padding: 20px; border-radius: 5px; }}
-            .field {{ margin-bottom: 15px; }}
-            .label {{ font-weight: bold; color: #555; }}
-            .value {{ color: #333; }}
-            .message-box {{ background: white; padding: 15px; border-left: 4px solid #4CAF50; }}
-            .footer {{ margin-top: 20px; font-size: 12px; color: #777; text-align: center; }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h2>📬 New Contact Form Submission</h2>
-                <p>From your website contact form</p>
-            </div>
-            
-            <div class="content">
-                <div class="field">
-                    <span class="label">👤 Name:</span><br>
-                    <span class="value">{name}</span>
-                </div>
-                
-                <div class="field">
-                    <span class="label">📧 Email:</span><br>
-                    <span class="value">{sender_email}</span>
-                </div>
-                
-                <div class="field">
-                    <span class="label">📞 Phone:</span><br>
-                    <span class="value">{phone if phone else 'Not provided'}</span>
-                </div>
-                
-                <div class="field">
-                    <span class="label">📝 Message:</span><br>
-                    <div class="message-box">
-                        {message.replace('\n', '<br>')}
-                    </div>
-                </div>
-                
-                <div class="field">
-                    <span class="label">🕒 Received at:</span><br>
-                    <span class="value">{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</span>
-                </div>
-            </div>
-            
-            <div class="footer">
-                <p>This message was sent automatically from your website contact form.</p>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-    
-    # Plain text version (for email clients that don't support HTML)
+    # Create plain text version
     text_content = f"""
     NEW CONTACT FORM SUBMISSION
     ===========================
@@ -136,15 +117,37 @@ def send_contact_email(name, sender_email, phone, message):
     msg['To'] = admin_email
     msg['Subject'] = subject
     
-    # Attach both HTML and plain text versions
     msg.attach(MIMEText(text_content, 'plain'))
-    msg.attach(MIMEText(html_content, 'html'))
     
-    # Send email (using Gmail SMTP)
-    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+    # Send email
+    try:
+        print(f"🔗 Connecting to Gmail SMTP...")
+        server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
+        print(f"✅ TLS started")
         server.login(your_email, your_password)
+        print(f"✅ Logged in to Gmail")
         server.send_message(msg)
+        server.quit()
+        print(f"✅ Email sent to {admin_email}")
+        return "success"
+        
+    except smtplib.SMTPAuthenticationError:
+        return "Gmail authentication failed. Check your email and app password."
+    except Exception as e:
+        return f"SMTP Error: {str(e)}"
+
+@app.route('/test', methods=['GET'])
+def test():
+    """Test endpoint to see environment variables"""
+    return jsonify({
+        "app": "Contact Form API",
+        "status": "running",
+        "email_user_set": bool(os.environ.get('EMAIL_USER')),
+        "email_password_set": bool(os.environ.get('EMAIL_PASSWORD')),
+        "admin_email": os.environ.get('ADMIN_EMAIL'),
+        "timestamp": datetime.now().isoformat()
+    })
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
