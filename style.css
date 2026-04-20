@@ -733,13 +733,12 @@ body.cursor-click #cursor-ring {
 /* Floating photo */
 .hero-photo-wrap {
   position: relative;
-  width: min(380px, 36vw);
+  width: min(380px, 34vw);
   flex-shrink: 0;
   z-index: 1;
+ order:1;
 }
-.hero-photo-wrap {
-  order: 1;
-}
+
 
 .hero-content {
   order: 2;
@@ -752,8 +751,8 @@ body.cursor-click #cursor-ring {
 .hero-photo-frame::before {
   content: '';
   position: absolute;
-  top: -18px; left: -16px;
-  right: 16px; bottom: 18px;
+  top: -20px; left: -20px;
+  right: 20px; bottom: 20px;
   border: 1px solid rgba(184,151,62,0.22);
   pointer-events: none;
   z-index: 0;
@@ -762,8 +761,8 @@ body.cursor-click #cursor-ring {
 .hero-photo-frame::after {
   content: '';
   position: absolute;
-  bottom: -28px; right: -22px;
-  width: 80px; height: 80px;
+  bottom: -24px; right: -20px;
+  width: 64px; height: 64px;
   border: 1px solid rgba(184,151,62,0.14);
   pointer-events: none;
 }
@@ -773,6 +772,9 @@ body.cursor-click #cursor-ring {
   z-index: 1;
   width: 100%;
   height: clamp(360px, 48vw, 480px);
+   aspect-ratio: 3 / 4;
+  height: auto;                  /* let aspect-ratio control height */
+  min-height: 360px;
   background: linear-gradient(145deg, var(--dark-3) 0%, var(--dark-2) 100%);
   display: flex;
   align-items: center;
@@ -791,6 +793,15 @@ body.cursor-click #cursor-ring {
   object-position: top center;
   filter: grayscale(15%) contrast(1.05);
 }
+@media (max-width: 960px) {
+  .hero-photo-wrap {
+    width: 100%;
+    max-width: 300px;
+    align-self: center;
+    order: -1;
+    margin-bottom: 2.5rem;
+  }
+
 
 /* Hero stats */
 .hero-stats {
@@ -798,6 +809,10 @@ body.cursor-click #cursor-ring {
   gap: 3rem;
   flex-wrap: wrap;
 }
+.hero-photo {
+    aspect-ratio: 3 / 4;
+    min-height: 300px;
+  }
 
 .stat-item {}
 
