@@ -729,14 +729,8 @@ body.cursor-click #cursor-ring {
 }
 
 /* Floating photo */
-.hero-photo-wrap {
-  position: absolute;
-  right: var(--pad-x);
-  top: 50%;
-  transform: translateY(-50%);
-  width: min(380px, 36vw);
-  z-index: 2;
-  will-change: transform;
+.hero-content {
+  padding-right: min(420px, 40vw);
 }
 
 .hero-photo-frame {
