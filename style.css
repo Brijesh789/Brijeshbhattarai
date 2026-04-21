@@ -479,9 +479,9 @@ body.cursor-click #cursor-ring { width: 28px; height: 28px; }
   overflow: hidden;
 }
 .hero-photo img {
-  width: 100%; height: 100%;
+  width: 80%; height: 100%;
   object-fit: contain;  /* changed from cover */
-  object-position: center center;
+  object-position: bottom center;
   filter: grayscale(12%) contrast(1.04);
 }
 /* ── Scroll cue ── */
