@@ -384,14 +384,12 @@ body.cursor-click #cursor-ring { width: 28px; height: 28px; }
   pointer-events: none; z-index: 0;
 }
 
-/* ── Left column: text ── */
-.hero-content {
-  position: relative; z-index: 2;
+/* ── Left column: photo ── */
+.hero-photo-col {
   grid-column: 1; grid-row: 1;
-  /* clamp padding so text never touches photo */
-  padding-right: 0;
+  position: relative; z-index: 2;
+  align-self: center;
 }
-
 .hero-status {
   display: inline-flex; align-items: center; gap: 10px;
   font-size: .65rem; font-weight: 400; letter-spacing: .2em;
@@ -446,12 +444,12 @@ body.cursor-click #cursor-ring { width: 28px; height: 28px; }
    Grid places this column to the right of the text.
    It simply cannot visually collide with column 1.
 */
-.hero-photo-col {
-  grid-column: 2; grid-row: 1;
+.hero-content {
   position: relative; z-index: 2;
-  align-self: center;
+  grid-column: 2; grid-row: 1;
+  /* clamp padding so text never touches photo */
+  padding-right: 0;
 }
-
 .hero-photo-frame { position: relative; }
 
 /* Decorative offset borders — positioned INSIDE the column */
