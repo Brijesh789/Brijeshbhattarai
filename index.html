@@ -70,14 +70,15 @@
   ══════════════════════════════════════ -->
   <div id="page-home" class="page">
 
-    <!-- Hero -->
+    <!-- Hero: CSS grid with 2 columns — text LEFT, photo RIGHT. No absolute positioning on photo. -->
     <section class="hero">
-      <!-- Parallax background layers -->
+
+      <!-- Decorative bg — absolute, z-index 0, pointer-events none, never affects layout -->
       <div class="hero-grid-lines"></div>
       <div class="hero-orb-1"></div>
       <div class="hero-orb-2"></div>
 
-      <!-- Hero copy -->
+      <!-- GRID COLUMN 1: Text content -->
       <div class="hero-content">
         <div class="hero-status anim-up delay-1">
           <span class="status-pulse"></span>
@@ -85,15 +86,12 @@
         </div>
 
         <h1 class="hero-title anim-up delay-2">
-          Markets,<br>
-          <em>Money</em>
-          &amp; Meaning
+          Markets,<br><em>Money</em>&amp; Meaning
         </h1>
 
         <p class="hero-subtitle anim-up delay-3">
           Decoding the complex language of finance and economics for Nepal and beyond.
-          Currently driving impact at Impact Hub Kathmandu — turning rigorous analysis
-          into actionable insight.
+          Currently at Impact Hub Kathmandu — turning rigorous analysis into actionable insight.
         </p>
 
         <div class="hero-actions anim-up delay-4">
@@ -117,18 +115,19 @@
         </div>
       </div>
 
-      <!-- Floating photo — cursor parallax -->
-      <div class="hero-photo-wrap anim-left delay-2">
+      <!-- GRID COLUMN 2: Photo — normal grid child, cannot overlap column 1 -->
+      <div class="hero-photo-col anim-left delay-3">
         <div class="hero-photo-frame">
           <div class="hero-photo">BB</div>
         </div>
       </div>
 
-      <!-- Scroll indicator -->
+      <!-- Scroll cue: decorative only, absolute within section -->
       <div class="scroll-cue anim-fade delay-6">
         <div class="scroll-line"></div>
         <div class="scroll-label">Scroll</div>
       </div>
+
     </section>
 
     <!-- Nav Cards -->
@@ -866,6 +865,6 @@
   </div><!-- /page-contact -->
 
 
-  <script src="main.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
